@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import FileUpload from './components/FileUpload.vue';
+import FileUploadChunk from './components/FileUploadChunk.vue';
 import FileList from './components/FileList.vue';
 
 const fileListRef = ref<InstanceType<typeof FileList> | null>(null);
@@ -25,7 +25,7 @@ const handleUploadSuccess = () => {
     </div>
 
     <div class="main-content">
-      <FileUpload @uploadSuccess="handleUploadSuccess" />
+      <FileUploadChunk @uploadSuccess="handleUploadSuccess" />
       <FileList ref="fileListRef" />
     </div>
 

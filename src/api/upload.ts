@@ -77,3 +77,61 @@ export const deleteFile = (id: number) => {
   return api.delete(`/upload/files/${id}`);
 };
 
+// ==================== 切片上传相关接口 ====================
+
+// 检查文件是否已存在（秒传）
+export const checkFileExists = (hash: string) => {
+  return api.get<{
+    exists: boolean;
+    file?: FileInfo;
+  }>('/upload/check', {
+    params: { hash },
+  });
+};
+
+// 检查已上传的切片
+export const checkUploadedChunks = (hash: string) => {
+  return api.get<{
+    uploadedChunks: number[];
+  }>('/upload/chunks/check', {
+    params: { hash },
+  });
+};
+
+// 上传单个切片
+export const uploadChunk = (
+  chunk: Blob,
+  hash: string,
+  index: number,
+  chunkHash: string,
+  onProgress?: (progressEvent: any) => void
+) => {
+  const formData = new FormData();
+  formData.append('chunk', chunk);
+  formData.append('hash', hash);
+  formData.append('index', index.toString());
+  formData.append('chunkHash', chunkHash);
+
+  return api.post('/upload/chunk', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+    onUploadProgress: onProgress,
+  });
+};
+
+// 合并切片
+export const mergeChunks = (
+  hash: string,
+  filename: string,
+  size: number,
+  mimetype: string
+) => {
+  return api.post<FileInfo>('/upload/merge', {
+    hash,
+    filename,
+    size,
+    mimetype,
+  });
+};
+
