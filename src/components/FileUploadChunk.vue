@@ -183,8 +183,8 @@ const uploadSingleFileWithChunks = async (file: File, fileIndex: number) => {
     
     if (checkResult.data.exists && checkResult.data.file) {
       // 秒传成功
-      uploadingFiles.value[fileIndex].status = 'instant';
-      uploadingFiles.value[fileIndex].progress = 100;
+      uploadingFiles.value[fileIndex]!.status = 'instant';
+      uploadingFiles.value[fileIndex]!.progress = 100;
       message.value = `文件"${file.name}"秒传成功！`;
       messageType.value = 'success';
       return;
@@ -194,7 +194,7 @@ const uploadSingleFileWithChunks = async (file: File, fileIndex: number) => {
     const chunks = createFileChunks(file, fileHash);
     console.log(`文件切片数量: ${chunks.length}`);
 
-    uploadingFiles.value[fileIndex].chunkInfo = {
+    uploadingFiles.value[fileIndex]!.chunkInfo = {
       completed: 0,
       total: chunks.length,
     };
@@ -208,7 +208,7 @@ const uploadSingleFileWithChunks = async (file: File, fileIndex: number) => {
     
     if (uploadedChunks.size > 0) {
       console.log(`检测到已上传 ${uploadedChunks.size} 个切片，继续上传剩余切片`);
-      uploadingFiles.value[fileIndex].chunkInfo.completed = uploadedChunks.size;
+      uploadingFiles.value[fileIndex]!.chunkInfo.completed = uploadedChunks.size;
     }
 
     // 5. 并发上传切片
@@ -226,8 +226,8 @@ const uploadSingleFileWithChunks = async (file: File, fileIndex: number) => {
         3, // 并发数
         (progress) => {
           const totalCompleted = uploadedChunks.size + progress.completed;
-          uploadingFiles.value[fileIndex].chunkInfo!.completed = totalCompleted;
-          uploadingFiles.value[fileIndex].progress = Math.floor(
+          uploadingFiles.value[fileIndex]!.chunkInfo!.completed = totalCompleted;
+          uploadingFiles.value[fileIndex]!.progress = Math.floor(
             (totalCompleted / chunks.length) * 100
           );
         }
@@ -235,8 +235,8 @@ const uploadSingleFileWithChunks = async (file: File, fileIndex: number) => {
     }
 
     // 6. 合并切片
-    uploadingFiles.value[fileIndex].status = 'merging';
-    uploadingFiles.value[fileIndex].progress = 100;
+    uploadingFiles.value[fileIndex]!.status = 'merging';
+    uploadingFiles.value[fileIndex]!.progress = 100;
     
     await mergeChunks(
       fileHash,
@@ -246,13 +246,13 @@ const uploadSingleFileWithChunks = async (file: File, fileIndex: number) => {
     );
 
     // 7. 上传成功
-    uploadingFiles.value[fileIndex].status = 'success';
+    uploadingFiles.value[fileIndex]!.status = 'success';
     message.value = `文件"${file.name}"上传成功！`;
     messageType.value = 'success';
 
   } catch (error: any) {
     console.error('上传失败:', error);
-    uploadingFiles.value[fileIndex].status = 'error';
+    uploadingFiles.value[fileIndex]!.status = 'error';
     message.value = `上传失败：${error.response?.data?.message || error.message}`;
     messageType.value = 'error';
     throw error;
@@ -277,7 +277,7 @@ const uploadFiles = async () => {
   try {
     // 顺序上传每个文件
     for (let i = 0; i < selectedFiles.value.length; i++) {
-      await uploadSingleFileWithChunks(selectedFiles.value[i], i);
+      await uploadSingleFileWithChunks(selectedFiles.value[i]!, i);
     }
 
     // 通知父组件刷新列表
