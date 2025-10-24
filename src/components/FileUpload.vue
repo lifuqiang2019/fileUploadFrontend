@@ -150,14 +150,21 @@ const uploadFiles = async () => {
     if (selectedFiles.value.length === 1) {
       // 单文件上传
       const file = selectedFiles.value[0];
+      if (!file) {
+        throw new Error('未选择文件');
+      }
       await uploadSingleFile(file, (progressEvent) => {
         const progress = Math.round(
           (progressEvent.loaded * 100) / progressEvent.total
         );
-        uploadingFiles.value[0].progress = progress;
+        if (uploadingFiles.value[0]) {
+          uploadingFiles.value[0].progress = progress;
+        }
       });
 
-      uploadingFiles.value[0].status = 'success';
+      if (uploadingFiles.value[0]) {
+        uploadingFiles.value[0].status = 'success';
+      }
       message.value = '文件上传成功！';
       messageType.value = 'success';
     } else {

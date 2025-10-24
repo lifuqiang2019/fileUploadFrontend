@@ -131,9 +131,15 @@ export const uploadChunksWithConcurrency = async <T>(
 
     const currentIndex = index++;
     const chunk = chunks[currentIndex];
+    
+    // 安全检查
+    if (!chunk) {
+      console.error(`切片 ${currentIndex} 不存在`);
+      return;
+    }
 
     try {
-      const result = await uploadFn(chunk, (chunkProgress) => {
+      const result = await uploadFn(chunk, () => {
         // 单个切片上传进度（可选处理）
       });
       results[currentIndex] = result;

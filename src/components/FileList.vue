@@ -197,7 +197,8 @@ const getFileIcon = (mimetype: string): string => {
 // 获取文件类型
 const getFileType = (mimetype: string): string => {
   const parts = mimetype.split('/');
-  return parts[parts.length - 1].toUpperCase();
+  const fileType = parts[parts.length - 1];
+  return fileType ? fileType.toUpperCase() : 'FILE';
 };
 
 // 格式化文件大小
